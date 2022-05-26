@@ -1,0 +1,89 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    
+}
+
+:root{
+    --cell-size: 80px;
+}
+
+
+body{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.Board{
+    display: grid;
+    grid-template-columns: repeat(10,auto);
+    position: relative; 
+    width: auto;
+    height: auto;
+}
+
+.cell{
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-color: darkkhaki;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}   
+
+.moveCell .pic{
+    max-width: 50px;
+    position: absolute;
+    cursor: pointer;
+    
+}
+
+.cell .pic{
+    max-width: 50px;
+    position: absolute;
+    cursor: pointer;
+    
+}
+
+.moveCell{
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-color: brown;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+}
+
+.moveCell .button{
+    content: '';
+    width: calc((var(--cell-size)* 0.15));
+    height: calc((var(--cell-size)* 0.15));
+    border-radius: 50px;
+    text-align: center;
+    position: absolute;
+    background-color: green;
+    border: solid 1px black;
+    
+} 
+
+.turn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    
+}
+
+.button:hover{
+    cursor: pointer;
+}
+
