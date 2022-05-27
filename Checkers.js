@@ -70,9 +70,58 @@ function whereGo(coin){
            
             let idd = queenMoves[i].id;
 
-            while(isEnd(idd) == false){
-               
-               
+            if (isOccupied2(queenMoves[i])){                             // checking for kill around queen
+               if (isLong2(queenMoves[i])){
+                  goCell = document.getElementById(parseInt(idd) + 4)
+                  createBtn(goCell);
+                  move.push(goCell);
+                  dead.push(queenMoves[i]);
+                  break;
+               }else{
+                  goCell = document.getElementById(parseInt(idd) + 5)
+                  createBtn(goCell);
+                  move.push(goCell);
+                  dead.push(queenMoves[i]);
+                  break;
+               }
+            } else{                                                              // there starting to check everywhere
+               createBtn(queenMoves[i]);
+               while(isEnd(idd) == false){
+                 if (isLong2(idd)){
+                    goCell = document.getElementById(parseInt(idd) + 4);
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                          move.push(document.getElementById(parseInt(goCell.id) + 5))
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                       }else{
+                          break;
+                          
+                       }
+                    }
+                    idd = parseInt(idd) + 4;
+                    
+                 }else{
+                    goCell = document.getElementById(parseInt(idd) + 5);      
+                    console.log(goCell)        
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(parseInt(goCell.id) + 4))
+                          move.push(document.getElementById(parseInt(goCell.id) + 4))           // vytvarime button o 4 protoze jdeme ze short na long
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                       }else{
+                          break;
+                       }
+                    }
+                    idd = parseInt(idd) + 5;
+                 }                                                            // End of MID - Left Down          
+               }
             }
             i++;
          }
@@ -81,9 +130,58 @@ function whereGo(coin){
             createBtn(queenMoves[i]);
             let idd = queenMoves[i].id;
 
-            while(isEnd(idd) == false){
-              
-               
+            if (isOccupied2(queenMoves[i])){                             // checking for kill around queen
+               if (isLong2(queenMoves[i])){
+                  goCell = document.getElementById(parseInt(idd) + 5)
+                  createBtn(goCell);
+                  move.push(goCell);
+                  dead.push(queenMoves[i]);
+                  break;
+               }else{
+                  goCell = document.getElementById(parseInt(idd) + 6)
+                  createBtn(goCell);
+                  move.push(goCell);
+                  dead.push(queenMoves[i]);
+                  break;
+               }
+            } else{                                                      // there starting to check everywhere
+               createBtn(queenMoves[i]);
+               while(isEnd(idd) == false){
+                 if (isLong2(idd)){
+                    goCell = document.getElementById(parseInt(idd) + 5);
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(parseInt(goCell.id) + 6))
+                          move.push(document.getElementById(parseInt(goCell.id) + 6))
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                       }else{
+                          break;
+                          
+                       }
+                    }
+                    idd = parseInt(idd) + 5;
+                    
+                 }else{
+                    goCell = document.getElementById(parseInt(idd) + 6);      
+                    console.log(goCell)        
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                          move.push(document.getElementById(parseInt(goCell.id) + 5))           // vytvarime button o 4 protoze jdeme ze short na long
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                       }else{
+                          break;
+                       }
+                    }
+                    idd = parseInt(idd) + 6;
+                 }                                                            // End of MID - Right Down          
+               }
             }
             i++;
          }
@@ -108,11 +206,60 @@ function whereGo(coin){
          if (i == 0){
             
             let idd = queenMoves[i].id;
-
-            while(isEnd(idd) == false){
-              
+            if (isOccupied2(queenMoves[i])){                             // checking for kill around queen
+               if (isLong2(queenMoves[i])){
+                  goCell = document.getElementById(idd - 5)
+                  createBtn(goCell);
+                  move.push(goCell);
+                  dead.push(queenMoves[i]);
+                  break;
+               }else{
+                  goCell = document.getElementById(idd - 4)
+                  createBtn(goCell);
+                  move.push(goCell);
+                  dead.push(queenMoves[i]);
+                  break;
+               }
                
+            }else{                                                       // there starting to check everywhere
+               createBtn(queenMoves[i]);
+               while(isEnd(idd) == false){
+                 if (isLong2(idd)){
+                    goCell = document.getElementById(idd - 5);
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(goCell.id - 4))
+                          move.push(document.getElementById(goCell.id - 4))
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                       }else{
+                          break;
+                          
+                       }
+                    }
+                    idd -=5;
+                    
+                 }else{
+                    goCell = document.getElementById(idd-4);              
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(goCell.id - 5))
+                          move.push(document.getElementById(goCell.id - 5))           // vytvarime button o 5 protoze jdeme ze short na long
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                       }else{
+                          break;
+                       }
+                    }
+                    idd -=4;
+                 }                                                            // End of MID - Right Top            
+               }
             }
+          
             i++;
          }
 
@@ -120,10 +267,59 @@ function whereGo(coin){
             
             let idd = queenMoves[i].id;
 
-            while(isEnd(idd) == false){
-              
+            if (isOccupied2(queenMoves[i])){                             // checking for kill around queen
+               if (isLong2(queenMoves[i])){
+                  goCell = document.getElementById(idd - 6)
+                  createBtn(goCell);
+                  move.push(goCell);
+                  dead.push(queenMoves[i]);
+                  break;
+               }else{
+                  goCell = document.getElementById(idd - 5)
+                  createBtn(goCell);
+                  move.push(goCell);
+                  dead.push(queenMoves[i]);
+                  break;
+               }
                
-            }
+             }else{                                                       // there starting to check everywhere
+               createBtn(queenMoves[i]);
+               while(isEnd(idd) == false){
+                 if (isLong2(idd)){
+                    goCell = document.getElementById(idd-6);
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(goCell.id - 5))
+                          move.push(document.getElementById(goCell.id - 5))
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                       }else{
+                          break;
+                          
+                       }
+                    }
+                    idd -=6;
+                    
+                 }else{
+                    goCell = document.getElementById(idd-5);              
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(goCell.id - 6))
+                          move.push(document.getElementById(goCell.id - 6))           // vytvarime button o 6 protoze jdeme ze short na long
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                       }else{
+                          break;
+                       }
+                    }
+                    idd -=5;
+                 }                                                            // End of MID - Left Top              
+               }
+             }
             i++;
          }
          if (move.length > 0){
@@ -143,13 +339,66 @@ function whereGo(coin){
               
                let idd = queenMoves[i].id;
    
-               while(isEnd(idd) == false){
-                  
-                  
+               if (isOccupied2(queenMoves[i])){                             // checking for kill around queen
+                  if (isLong2(queenMoves[i])){
+                     goCell = document.getElementById(parseInt(idd) + 4)
+                     createBtn(goCell);
+                     move.push(goCell);
+                     dead.push(queenMoves[i]);
+                     break;
+                  }else{
+                     goCell = document.getElementById(parseInt(idd) + 5)
+                     createBtn(goCell);
+                     move.push(goCell);
+                     dead.push(queenMoves[i]);
+                     break;
+                  }
+               } else{                                                              // there starting to check everywhere
+                  createBtn(queenMoves[i]);
+                  while(isEnd(idd) == false){
+                    if (isLong2(idd)){
+                       goCell = document.getElementById(parseInt(idd) + 4);
+                       if (isOccupied2(goCell) == false){
+                          createBtn(goCell);
+                       }else{
+                          if (isEnd(goCell.id) == false){
+                             createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                             move.push(document.getElementById(parseInt(goCell.id) + 5))
+                             dead.push(document.getElementById(goCell.id));
+                             break;
+                             
+                          }else{
+                             break;
+                             
+                          }
+                       }
+                       idd = parseInt(idd) + 4;
+                       
+                    }else{
+                       goCell = document.getElementById(parseInt(idd) + 5);      
+                       console.log(goCell)        
+                       if (isOccupied2(goCell) == false){
+                          createBtn(goCell);
+                       }else{
+                          if (isEnd(goCell.id) == false){
+                             createBtn(document.getElementById(parseInt(goCell.id) + 4))
+                             move.push(document.getElementById(parseInt(goCell.id) + 4))           // vytvarime button o 4 protoze jdeme ze short na long
+                             dead.push(document.getElementById(goCell.id));
+                             break;
+                          }else{
+                             break;
+                          }
+                       }
+                       idd = parseInt(idd) + 5;
+                    }                                                            // End of MID - Left Down          
+                  }
                }
-               i++;
             }
+            i++;
    
+         }
+         if (move.length > 0){
+            showOnlyKills();
          }
          
         }else if (isExtraCorner(coin.parentNode.id) == "down"){
@@ -163,12 +412,66 @@ function whereGo(coin){
                
                let idd = queenMoves[i].id;
    
-               while(isEnd(idd) == false){
-                 
-                  i++;  
+               if (isOccupied2(queenMoves[i])){                             // checking for kill around queen
+                  if (isLong2(queenMoves[i])){
+                     goCell = document.getElementById(idd - 5)
+                     createBtn(goCell);
+                     move.push(goCell);
+                     dead.push(queenMoves[i]);
+                     break;
+                  }else{
+                     goCell = document.getElementById(idd - 4)
+                     createBtn(goCell);
+                     move.push(goCell);
+                     dead.push(queenMoves[i]);
+                     break;
+                  }
+                  
+               }else{                                                       // there starting to check everywhere
+                  createBtn(queenMoves[i]);
+                  while(isEnd(idd) == false){
+                    if (isLong2(idd)){
+                       goCell = document.getElementById(idd - 5);
+                       if (isOccupied2(goCell) == false){
+                          createBtn(goCell);
+                       }else{
+                          if (isEnd(goCell.id) == false){
+                             createBtn(document.getElementById(goCell.id - 4))
+                             move.push(document.getElementById(goCell.id - 4))
+                             dead.push(document.getElementById(goCell.id));
+                             break;
+                          }else{
+                             break;
+                             
+                          }
+                       }
+                       idd -=5;
+                       
+                    }else{
+                       goCell = document.getElementById(idd-4);              
+                       if (isOccupied2(goCell) == false){
+                          createBtn(goCell);
+                       }else{
+                          if (isEnd(goCell.id) == false){
+                             createBtn(document.getElementById(goCell.id - 5))
+                             move.push(document.getElementById(goCell.id - 5))           // vytvarime button o 5 protoze jdeme ze short na long
+                             dead.push(document.getElementById(goCell.id));
+                             break;
+                          }else{
+                             break;
+                          }
+                       }
+                       idd -=4;
+                    }                                                            // End of MID - Right Top            
+                  }
                }
-            }                                                   //BUG
+            }         
+            i++;      
+                                           
          }
+         if (move.length > 0){
+            showOnlyKills();
+         }    
         }else{
          if (isCorner2(coin.parentNode.id) == "left"){
            
@@ -182,19 +485,123 @@ function whereGo(coin){
              if (i == 0){
                 
                 let idd = queenMoves[i].id;
-                createBtn(queenMoves[i]);
-                while(isEnd(idd) == false){
+                
+                if (isOccupied2(queenMoves[i])){                             // checking for kill around queen
+                  if (isLong2(queenMoves[i])){
+                     goCell = document.getElementById(idd - 5)
+                     createBtn(goCell);
+                     move.push(goCell);
+                     dead.push(queenMoves[i]);
+                     break;
+                  }else{
+                     goCell = document.getElementById(idd - 4)
+                     createBtn(goCell);
+                     move.push(goCell);
+                     dead.push(queenMoves[i]);
+                     break;
+                  }
+                  
+               }else{                                                       // there starting to check everywhere
+                  createBtn(queenMoves[i]);
+                  while(isEnd(idd) == false){
+                    if (isLong2(idd)){
+                       goCell = document.getElementById(idd - 5);
+                       if (isOccupied2(goCell) == false){
+                          createBtn(goCell);
+                       }else{
+                          if (isEnd(goCell.id) == false){
+                             createBtn(document.getElementById(goCell.id - 4))
+                             move.push(document.getElementById(goCell.id - 4))
+                             dead.push(document.getElementById(goCell.id));
+                             break;
+                          }else{
+                             break;
+                             
+                          }
+                       }
+                       idd -=5;
+                       
+                    }else{
+                       goCell = document.getElementById(idd-4);              
+                       if (isOccupied2(goCell) == false){
+                          createBtn(goCell);
+                       }else{
+                          if (isEnd(goCell.id) == false){
+                             createBtn(document.getElementById(goCell.id - 5))
+                             move.push(document.getElementById(goCell.id - 5))           // vytvarime button o 5 protoze jdeme ze short na long
+                             dead.push(document.getElementById(goCell.id));
+                             break;
+                          }else{
+                             break;
+                          }
+                       }
+                       idd -=4;
+                    }                                                            // End of MID - Right Top            
+                  }
+               }
                   
                    
-                }
+                
              }
              if (i == 1){
                
                 let idd = queenMoves[i].id;
-                createBtn(queenMoves[i]);
-                while(isEnd(idd) == false){
-                  
-                }
+                
+                if (isOccupied2(queenMoves[i])){                             // checking for kill around queen
+                  if (isLong2(queenMoves[i])){
+                     goCell = document.getElementById(parseInt(idd) + 5)
+                     createBtn(goCell);
+                     move.push(goCell);
+                     dead.push(queenMoves[i]);
+                     break;
+                  }else{
+                     goCell = document.getElementById(parseInt(idd) + 6)
+                     createBtn(goCell);
+                     move.push(goCell);
+                     dead.push(queenMoves[i]);
+                     break;
+                  }
+               } else{                                                      // there starting to check everywhere
+                  createBtn(queenMoves[i]);
+                  while(isEnd(idd) == false){
+                    if (isLong2(idd)){
+                       goCell = document.getElementById(parseInt(idd) + 5);
+                       if (isOccupied2(goCell) == false){
+                          createBtn(goCell);
+                       }else{
+                          if (isEnd(goCell.id) == false){
+                             createBtn(document.getElementById(parseInt(goCell.id) + 6))
+                             move.push(document.getElementById(parseInt(goCell.id) + 6))
+                             dead.push(document.getElementById(goCell.id));
+                             break;
+                          }else{
+                             break;
+                             
+                          }
+                       }
+                       idd = parseInt(idd) + 5;
+                       
+                    }else{
+                       goCell = document.getElementById(parseInt(idd) + 6);      
+                       console.log(goCell)        
+                       if (isOccupied2(goCell) == false){
+                          createBtn(goCell);
+                       }else{
+                          if (isEnd(goCell.id) == false){
+                             createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                             move.push(document.getElementById(parseInt(goCell.id) + 5))           // vytvarime button o 4 protoze jdeme ze short na long
+                             dead.push(document.getElementById(goCell.id));
+                             break;
+                          }else{
+                             break;
+                          }
+                       }
+                       idd = parseInt(idd) + 6;
+                    }                                                            // End of MID - Right Down          
+                  }
+               }
+                
+                
              }
              i++;
     
@@ -214,23 +621,108 @@ function whereGo(coin){
            if (i == 0){
              
               let idd = queenMoves[i].id;
-    
-              while(isEnd(idd) == false){
-                
-                 
-              }
+              if (isOccupied2(queenMoves[i])){                             // checking for kill around queen
+               goCell = document.getElementById(idd - 6)
+               createBtn(goCell);
+               move.push(goCell);
+               dead.push(queenMoves[i]);
+               break;
+             }else{                                                       // there starting to check everywhere
+               createBtn(queenMoves[i]);
+               while(isEnd(idd) == false){
+                 if (isLong2(idd)){
+                    goCell = document.getElementById(idd-6);
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(goCell.id - 5))
+                          move.push(document.getElementById(goCell.id - 5))
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                          
+                       }else{
+                          break;
+                          
+                       }
+                    }
+                    idd -=6;
+                    
+                 }else{
+                    goCell = document.getElementById(idd-5);              
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(goCell.id - 6))
+                          move.push(document.getElementById(goCell.id - 6))           // vytvarime button o 6 protoze jdeme ze short na long
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                       }else{
+                          break;
+                       }
+                    }
+                    idd -=5;
+                 }                                                            // End of MID - Left Top              
+               }
+             }
+              
            }
            if (i == 1){
               
               let idd = queenMoves[i].id;
-              while(isEnd(idd) == false){
-                
-              }
+              if (isOccupied2(queenMoves[i])){                             // checking for kill around queen
+               goCell = document.getElementById(parseInt(idd) + 4)
+               createBtn(goCell);
+               move.push(goCell);
+               dead.push(queenMoves[i]);
+               break;
+            } else{                                                              // there starting to check everywhere
+               createBtn(queenMoves[i]);
+               while(isEnd(idd) == false){
+                 if (isLong2(idd)){
+                    goCell = document.getElementById(parseInt(idd) + 4);
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                          move.push(document.getElementById(parseInt(goCell.id) + 5))
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                       }else{
+                          break;
+                          
+                       }
+                    }
+                    idd = parseInt(idd) + 4;
+                    
+                 }else{
+                    goCell = document.getElementById(parseInt(idd) + 5);      
+                    console.log(goCell)        
+                    if (isOccupied2(goCell) == false){
+                       createBtn(goCell);
+                    }else{
+                       if (isEnd(goCell.id) == false){
+                          createBtn(document.getElementById(parseInt(goCell.id) + 4))
+                          move.push(document.getElementById(parseInt(goCell.id) + 4))           // vytvarime button o 4 protoze jdeme ze short na long
+                          dead.push(document.getElementById(goCell.id));
+                          break;
+                       }else{
+                          break;
+                       }
+                    }
+                    idd = parseInt(idd) + 5;
+                 }                                                            // End of MID - Left Down          
+               }
+            }
            }
            i++;
-    
+           
           }
-    
+          if (move.length > 0){
+            showOnlyKills();
+          }
          }else{
           if (isLong(coin)){
              queenMoves.push(cell = document.getElementById(parseInt(id)-6),
@@ -260,11 +752,13 @@ function whereGo(coin){
                         createBtn(goCell);
                         move.push(goCell);
                         dead.push(queenMoves[i]);
+                        break;
                      }else{
                         goCell = document.getElementById(idd - 5)
                         createBtn(goCell);
                         move.push(goCell);
                         dead.push(queenMoves[i]);
+                        break;
                      }
                      
                    }else{                                                       // there starting to check everywhere
@@ -279,7 +773,7 @@ function whereGo(coin){
                                 createBtn(document.getElementById(goCell.id - 5))
                                 move.push(document.getElementById(goCell.id - 5))
                                 dead.push(document.getElementById(goCell.id));
-                                
+                                break;
                              }else{
                                 break;
                                 
@@ -296,7 +790,7 @@ function whereGo(coin){
                                 createBtn(document.getElementById(goCell.id - 6))
                                 move.push(document.getElementById(goCell.id - 6))           // vytvarime button o 6 protoze jdeme ze short na long
                                 dead.push(document.getElementById(goCell.id));
-                                
+                                break;
                              }else{
                                 break;
                              }
@@ -321,11 +815,13 @@ function whereGo(coin){
                         createBtn(goCell);
                         move.push(goCell);
                         dead.push(queenMoves[i]);
+                        break;
                      }else{
                         goCell = document.getElementById(idd - 4)
                         createBtn(goCell);
                         move.push(goCell);
                         dead.push(queenMoves[i]);
+                        break;
                      }
                      
                   }else{                                                       // there starting to check everywhere
@@ -340,7 +836,7 @@ function whereGo(coin){
                                 createBtn(document.getElementById(goCell.id - 4))
                                 move.push(document.getElementById(goCell.id - 4))
                                 dead.push(document.getElementById(goCell.id));
-                                
+                                break;
                              }else{
                                 break;
                                 
@@ -357,7 +853,7 @@ function whereGo(coin){
                                 createBtn(document.getElementById(goCell.id - 5))
                                 move.push(document.getElementById(goCell.id - 5))           // vytvarime button o 5 protoze jdeme ze short na long
                                 dead.push(document.getElementById(goCell.id));
-                                
+                                break;
                              }else{
                                 break;
                              }
@@ -379,11 +875,13 @@ function whereGo(coin){
                         createBtn(goCell);
                         move.push(goCell);
                         dead.push(queenMoves[i]);
+                        break;
                      }else{
                         goCell = document.getElementById(parseInt(idd) + 5)
                         createBtn(goCell);
                         move.push(goCell);
                         dead.push(queenMoves[i]);
+                        break;
                      }
                   } else{                                                              // there starting to check everywhere
                      createBtn(queenMoves[i]);
@@ -397,7 +895,7 @@ function whereGo(coin){
                                 createBtn(document.getElementById(parseInt(goCell.id) + 5))
                                 move.push(document.getElementById(parseInt(goCell.id) + 5))
                                 dead.push(document.getElementById(goCell.id));
-                                
+                                break;
                              }else{
                                 break;
                                 
@@ -415,7 +913,7 @@ function whereGo(coin){
                                 createBtn(document.getElementById(parseInt(goCell.id) + 4))
                                 move.push(document.getElementById(parseInt(goCell.id) + 4))           // vytvarime button o 4 protoze jdeme ze short na long
                                 dead.push(document.getElementById(goCell.id));
-                                
+                                break;
                              }else{
                                 break;
                              }
@@ -437,11 +935,13 @@ function whereGo(coin){
                         createBtn(goCell);
                         move.push(goCell);
                         dead.push(queenMoves[i]);
+                        break;
                      }else{
                         goCell = document.getElementById(parseInt(idd) + 6)
                         createBtn(goCell);
                         move.push(goCell);
                         dead.push(queenMoves[i]);
+                        break;
                      }
                   } else{                                                      // there starting to check everywhere
                      createBtn(queenMoves[i]);
@@ -455,7 +955,7 @@ function whereGo(coin){
                                 createBtn(document.getElementById(parseInt(goCell.id) + 6))
                                 move.push(document.getElementById(parseInt(goCell.id) + 6))
                                 dead.push(document.getElementById(goCell.id));
-                                
+                                break;
                              }else{
                                 break;
                                 
@@ -473,7 +973,7 @@ function whereGo(coin){
                                 createBtn(document.getElementById(parseInt(goCell.id) + 5))
                                 move.push(document.getElementById(parseInt(goCell.id) + 5))           // vytvarime button o 4 protoze jdeme ze short na long
                                 dead.push(document.getElementById(goCell.id));
-                                
+                                break;
                              }else{
                                 break;
                              }
