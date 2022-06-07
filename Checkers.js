@@ -1,12 +1,19 @@
 let coins = document.querySelectorAll("[data-coin]");                 //poresit ztabijeni s kralovnou kdyz za cilem bude nekdo stat a vyhnout se zabijenim targetu kdyz je na konci a id jde do minusu
 let moveCells = document.querySelectorAll(".moveCell");
+const winMessage = document.getElementById("win");
+
 
 let long = -1;
 let cell;
 let cell2;
+var canAddChecked = false;
+var checkedCoins = [];
 let cell3;
+var killed = false;
 let cell4;
 var activeCoin;
+var checkingKill = false;
+var lastMove;
 var go = false;
 var turn = true;
 var side = "";
@@ -22,11 +29,14 @@ var move = [];
 var backIsActive = false;
 
 
-coins.forEach(coin => {
+coins.forEach(coin => {       
+   
   
    coin.addEventListener("click", function() {
       clearButtons();
+      
       activeCoin = document.getElementById(coin.parentNode.id).getElementsByTagName("img")[0];
+       checkWin();
        whereGo(coin);
        
        //console.log(turn);
@@ -36,6 +46,8 @@ coins.forEach(coin => {
 
 
 function whereGo(coin){
+   activeCoin = document.getElementById(coin.parentNode.id).getElementsByTagName("img")[0];
+   canAddChecked = false;
    canForward = true;
    activeQueen = false;
    queenMoves = [];
@@ -52,7 +64,7 @@ function whereGo(coin){
   repeat = true
   moveCells = document.querySelectorAll(".moveCell");
   coins = document.querySelectorAll("[data-coin]");
-  
+  console.log(activeCoin);
   if (coin.src.includes("Queen")){
      activeQueen = true;
      console.log("queen");
@@ -70,34 +82,70 @@ function whereGo(coin){
            
             let idd = queenMoves[i].id;
 
-            if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+            if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
                if (isLong2(queenMoves[i].id)){
                   goCell = document.getElementById(parseInt(idd) + 4)
-                  createBtn(goCell);
-                  move.push(goCell);
-                  dead.push(queenMoves[i]);
-                  break;
+                  if (checkingKill == false){
+                     if (isOccupied2(goCell) == false){
+                        createBtn(goCell);
+                        move.push(goCell);
+                        dead.push(queenMoves[i]);
+                     }
+                    }else{
+                     if (isOccupied2(goCell) == false){
+                        goCell = document.getElementById(parseInt(idd) + 4)
+                        canAddChecked = true;
+                    }
+                     console.log("kill")                                      // checkovani
+                    }
+                  
                }else{
                   goCell = document.getElementById(parseInt(idd) + 5)
-                  createBtn(goCell);
-                  move.push(goCell);
-                  dead.push(queenMoves[i]);
-                  break;
+                  if (checkingKill == false){
+                     if (isOccupied2(goCell) == false){
+                        createBtn(goCell);
+                        move.push(goCell);
+                        dead.push(queenMoves[i]);
+                     }
+                    }else{
+                     if (isOccupied2(goCell) == false){
+                        goCell = document.getElementById(parseInt(idd) + 5)
+                        canAddChecked = true;
+                    }
+                                                      // checkovani
+                    }
+                  
                }
             } else{                                                              // there starting to check everywhere
                if (isOccupied2(queenMoves[i]) == false){
-                  createBtn(queenMoves[i]);
+                  if (checkingKill == false){
+                     createBtn(queenMoves[i]);
+                  }
+                  
+               }else{
+                  i++;
+                  continue;
                }
                while(isEnd(idd) == false){
                  if (isLong2(idd)){
                     goCell = document.getElementById(parseInt(idd) + 4);
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
+                      
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false){
-                          createBtn(document.getElementById(parseInt(goCell.id) + 5))
-                          move.push(document.getElementById(parseInt(goCell.id) + 5))
-                          dead.push(document.getElementById(goCell.id));
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false && isSameTeam(goCell) == false){
+
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                           move.push(document.getElementById(parseInt(goCell.id) + 5))
+                           dead.push(document.getElementById(goCell.id));
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+                         
                           break;
                        }else{
                           break;
@@ -110,12 +158,21 @@ function whereGo(coin){
                     goCell = document.getElementById(parseInt(idd) + 5);      
                     console.log(goCell)        
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-4))) == false){
-                          createBtn(document.getElementById(parseInt(goCell.id) + 4))
-                          move.push(document.getElementById(parseInt(goCell.id) + 4))           // vytvarime button o 4 protoze jdeme ze short na long
-                          dead.push(document.getElementById(goCell.id));
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-4))) == false && isSameTeam(goCell) == false){
+
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(parseInt(goCell.id) + 4))
+                           move.push(document.getElementById(parseInt(goCell.id) + 4))           // vytvarime button o 4 protoze jdeme ze short na long
+                           dead.push(document.getElementById(goCell.id));
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+                       
                           break;
                        }else{
                           break;
@@ -132,35 +189,72 @@ function whereGo(coin){
            
             let idd = queenMoves[i].id;
 
-            if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+            if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
                if (isLong2(queenMoves[i].id)){
-                  goCell = document.getElementById(parseInt(idd) + 5)
-                  createBtn(goCell);
-                  move.push(goCell);
-                  dead.push(queenMoves[i]);
-                  break;
+
+
+                  if (checkingKill == false){
+                     goCell = document.getElementById(parseInt(idd) + 5)
+                     if (isOccupied2(goCell) == false){
+                        createBtn(goCell);
+                        move.push(goCell);
+                        dead.push(queenMoves[i]);
+                     }
+                    }else{
+                     if (isOccupied2(goCell) == false){
+                        goCell = document.getElementById(parseInt(idd) + 5)
+                        canAddChecked = true;
+                    }
+                                                        // checkovani
+                    }
+                 
                }else{
-                  goCell = document.getElementById(parseInt(idd) + 6)
-                  createBtn(goCell);
-                  move.push(goCell);
-                  dead.push(queenMoves[i]);
-                  break;
+                  if (checkingKill == false){
+                     goCell = document.getElementById(parseInt(idd) + 6)
+                     if (isOccupied2(goCell) == false){
+                        createBtn(goCell);
+                        move.push(goCell);
+                        dead.push(queenMoves[i]);
+                     }
+                    }else{
+                     if (isOccupied2(goCell) == false){
+                        goCell = document.getElementById(parseInt(idd) + 6)
+                        canAddChecked = true;
+                    }
+                                                        // checkovani
+                    }
+                
+                
                }
             } else{                                                      // there starting to check everywhere
                if (isOccupied2(queenMoves[i]) == false){
-                  createBtn(queenMoves[i]);
+                  if (checkingKill == false){
+                     createBtn(queenMoves[i]);
+                  }
+               }else{
+                  i++;
+                  continue;
                }
+               
                while(isEnd(idd) == false){
                  if (isLong2(idd)){
                     goCell = document.getElementById(parseInt(idd) + 5);
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-6))) == false){
-                          createBtn(document.getElementById(parseInt(goCell.id) + 6))
-                          move.push(document.getElementById(parseInt(goCell.id) + 6))
-                          dead.push(document.getElementById(goCell.id));
-                          break;
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-6))) == false && isSameTeam(goCell) == false){
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(parseInt(goCell.id) + 6))
+                           move.push(document.getElementById(parseInt(goCell.id) + 6))
+                           dead.push(document.getElementById(goCell.id));
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+                       
+                         
                        }else{
                           break;
                           
@@ -172,13 +266,21 @@ function whereGo(coin){
                     goCell = document.getElementById(parseInt(idd) + 6);      
                     console.log(goCell)        
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false){
-                          createBtn(document.getElementById(parseInt(goCell.id) + 5))
-                          move.push(document.getElementById(parseInt(goCell.id) + 5))           // vytvarime button o 4 protoze jdeme ze short na long
-                          dead.push(document.getElementById(goCell.id));
-                          break;
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false && isSameTeam(goCell) == false){
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                           move.push(document.getElementById(parseInt(goCell.id) + 5))           // vytvarime button o 4 protoze jdeme ze short na long
+                           dead.push(document.getElementById(goCell.id));
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+                       
+                         
                        }else{
                           break;
                        }
@@ -210,36 +312,72 @@ function whereGo(coin){
          if (i == 0){
             
             let idd = queenMoves[i].id;
-            if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+            if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
                if (isLong2(queenMoves[i].id)){
-                  goCell = document.getElementById(idd - 5)
-                  createBtn(goCell);
-                  move.push(goCell);
-                  dead.push(queenMoves[i]);
-                  break;
+                  if (checkingKill == false){
+                     goCell = document.getElementById(idd - 5)
+                     if (isOccupied2(goCell) == false){
+                        createBtn(goCell);
+                        move.push(goCell);
+                        dead.push(queenMoves[i]);
+                     }
+                    }else{
+                     if (isOccupied2(goCell) == false){
+                        goCell = document.getElementById(idd - 5)
+                        canAddChecked = true;
+                    }
+                                                        // checkovani
+                    }
+                
+                 
                }else{
-                  goCell = document.getElementById(idd - 4)
-                  createBtn(goCell);
-                  move.push(goCell);
-                  dead.push(queenMoves[i]);
-                  break;
+                  if (checkingKill == false){
+                     goCell = document.getElementById(idd - 4)
+                     if (isOccupied2(goCell) == false){
+                        createBtn(goCell);
+                        move.push(goCell);
+                        dead.push(queenMoves[i]);
+                     }
+                    }else{
+                     if (isOccupied2(goCell) == false){
+                        goCell = document.getElementById(idd - 4)
+                        canAddChecked = true;
+                     }
+                                                        // checkovani
+                    }
+                
+                 
                }
                
             }else{                                                       // there starting to check everywhere
                if (isOccupied2(queenMoves[i]) == false){
-                  createBtn(queenMoves[i]);
+                  if (checkingKill == false){
+                     createBtn(queenMoves[i]);
+                  }
+               }else{
+                  i++;
+                  continue;
                }
                while(isEnd(idd) == false){
                  if (isLong2(idd)){
                     goCell = document.getElementById(idd - 5);
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -4)) == false){
-                          createBtn(document.getElementById(goCell.id - 4))
-                          move.push(document.getElementById(goCell.id - 4))
-                          dead.push(document.getElementById(goCell.id));
-                          break;
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -4)) == false && isSameTeam(goCell) == false){
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(goCell.id - 4))
+                           move.push(document.getElementById(goCell.id - 4))
+                           dead.push(document.getElementById(goCell.id));
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+
+                       
+                          
                        }else{
                           break;
                           
@@ -250,13 +388,21 @@ function whereGo(coin){
                  }else{
                     goCell = document.getElementById(idd-4);              
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -5)) == false){
-                          createBtn(document.getElementById(goCell.id - 5))
-                          move.push(document.getElementById(goCell.id - 5))           // vytvarime button o 5 protoze jdeme ze short na long
-                          dead.push(document.getElementById(goCell.id));
-                          break;
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -5)) == false && isSameTeam(goCell) == false){
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(goCell.id - 5))
+                           move.push(document.getElementById(goCell.id - 5))           // vytvarime button o 5 protoze jdeme ze short na long
+                           dead.push(document.getElementById(goCell.id));
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+                         
+                         
                        }else{
                           break;
                        }
@@ -273,36 +419,71 @@ function whereGo(coin){
             
             let idd = queenMoves[i].id;
 
-            if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+            if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
                if (isLong2(queenMoves[i].id)){
-                  goCell = document.getElementById(idd - 6)
-                  createBtn(goCell);
-                  move.push(goCell);
-                  dead.push(queenMoves[i]);
-                  break;
+                  if (checkingKill == false){
+                     goCell = document.getElementById(idd - 6)
+                     if (isOccupied2(goCell) == false){
+                        createBtn(goCell);
+                        move.push(goCell);
+                        dead.push(queenMoves[i]);
+                     }
+                    }else{
+                     if (isOccupied2(goCell) == false){
+                        goCell = document.getElementById(idd - 6)
+                        canAddChecked = true;
+                    }
+                                                        // checkovani
+                    }
+               
+                  
                }else{
-                  goCell = document.getElementById(idd - 5)
-                  createBtn(goCell);
-                  move.push(goCell);
-                  dead.push(queenMoves[i]);
-                  break;
+                  if (checkingKill == false){
+                     goCell = document.getElementById(idd - 5)
+                     if (isOccupied2(goCell) == false){
+                        createBtn(goCell);
+                        move.push(goCell);
+                        dead.push(queenMoves[i]);
+                     }
+                     
+                    }else{
+                     if (isOccupied2(goCell) == false){
+                        goCell = document.getElementById(idd - 5)
+                        canAddChecked = true;
+                    }
+                                                        // checkovani
+                    }
+              
                }
                
              }else{                                                       // there starting to check everywhere
                if (isOccupied2(queenMoves[i]) == false){
-                  createBtn(queenMoves[i]);
+                  if (checkingKill == false){
+                     createBtn(queenMoves[i]);
+                  }
+               }else{
+                  i++;
+                  continue;
                }
                while(isEnd(idd) == false){
                  if (isLong2(idd)){
                     goCell = document.getElementById(idd-6);
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -5)) == false){
-                          createBtn(document.getElementById(goCell.id - 5))
-                          move.push(document.getElementById(goCell.id - 5))
-                          dead.push(document.getElementById(goCell.id));
-                          break;
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -5)) == false && isSameTeam(goCell) == false){
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(goCell.id - 5))
+                           move.push(document.getElementById(goCell.id - 5))
+                           dead.push(document.getElementById(goCell.id));
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+                       
+                         
                        }else{
                           break;
                           
@@ -313,12 +494,20 @@ function whereGo(coin){
                  }else{
                     goCell = document.getElementById(idd-5);              
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -6)) == false){
-                          createBtn(document.getElementById(goCell.id - 6))
-                          move.push(document.getElementById(goCell.id - 6))           // vytvarime button o 6 protoze jdeme ze short na long
-                          dead.push(document.getElementById(goCell.id));
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -6)) == false && isSameTeam(goCell) == false){
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(goCell.id - 6))
+                           move.push(document.getElementById(goCell.id - 6))           // vytvarime button o 6 protoze jdeme ze short na long
+                           dead.push(document.getElementById(goCell.id));
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+                        
                           break;
                        }else{
                           break;
@@ -347,34 +536,70 @@ function whereGo(coin){
               
                let idd = queenMoves[i].id;
    
-               if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+               if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
                   if (isLong2(queenMoves[i].id)){
-                     goCell = document.getElementById(parseInt(idd) + 4)
-                     createBtn(goCell);
-                     move.push(goCell);
-                     dead.push(queenMoves[i]);
+                     if (checkingKill == false){
+                        goCell = document.getElementById(parseInt(idd) + 4)
+                        if (isOccupied2(goCell) == false){
+                           createBtn(goCell);
+                           move.push(goCell);
+                           dead.push(queenMoves[i]);
+                        }
+                       }else{
+                        if (isOccupied2(goCell) == false){
+                           goCell = document.getElementById(parseInt(idd) + 4)
+                           canAddChecked = true;
+                       }
+                                                           // checkovani
+                       }
+                   
                      break;
                   }else{
-                     goCell = document.getElementById(parseInt(idd) + 5)
-                     createBtn(goCell);
-                     move.push(goCell);
-                     dead.push(queenMoves[i]);
+                     if (checkingKill == false){
+                        goCell = document.getElementById(parseInt(idd) + 5)
+                        if (isOccupied2(goCell) == false){
+                           createBtn(goCell);
+                           move.push(goCell);
+                           dead.push(queenMoves[i]);
+                        }
+                       }else{
+                        if (isOccupied2(goCell) == false){
+                           goCell = document.getElementById(parseInt(idd) + 5)
+                           canAddChecked = true;
+                       }
+                                                           // checkovani
+                       }
+                   
                      break;
                   }
                } else{                                                              // there starting to check everywhere
                   if (isOccupied2(queenMoves[i]) == false){
-                     createBtn(queenMoves[i]);
+                     if (checkingKill == false){
+                        createBtn(queenMoves[i]);
+                        
+                     }
+                  }else{
+                     break;
                   }
                   while(isEnd(idd) == false){
                     if (isLong2(idd)){
                        goCell = document.getElementById(parseInt(idd) + 4);
                        if (isOccupied2(goCell) == false){
-                          createBtn(goCell);
+                        if (checkingKill == false){
+                           createBtn(goCell);
+                        }
                        }else{
-                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false){
-                             createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                          
+                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false && isSameTeam(goCell) == false){
+                           if (checkingKill == false){
+                              createBtn(document.getElementById(parseInt(goCell.id) + 5))
                              move.push(document.getElementById(parseInt(goCell.id) + 5))
                              dead.push(document.getElementById(goCell.id));
+                             }else{
+                              canAddChecked = true;
+                                                                 // checkovani
+                             }
+                            
                              break;
                              
                           }else{
@@ -388,12 +613,20 @@ function whereGo(coin){
                        goCell = document.getElementById(parseInt(idd) + 5);      
                        console.log(goCell)        
                        if (isOccupied2(goCell) == false){
-                          createBtn(goCell);
+                        if (checkingKill == false){
+                           createBtn(goCell);
+                        }
                        }else{
-                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-4))) == false){
-                             createBtn(document.getElementById(parseInt(goCell.id) + 4))
+                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-4))) == false && isSameTeam(goCell) == false){
+                           if (checkingKill == false){
+                              createBtn(document.getElementById(parseInt(goCell.id) + 4))
                              move.push(document.getElementById(parseInt(goCell.id) + 4))           // vytvarime button o 4 protoze jdeme ze short na long
                              dead.push(document.getElementById(goCell.id));
+                             }else{
+                              canAddChecked = true;
+                                                                 // checkovani
+                             }
+                           
                              break;
                           }else{
                              break;
@@ -421,36 +654,70 @@ function whereGo(coin){
             if (i == 0){
                
                let idd = queenMoves[i].id;
-   
-               if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+               
+               if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
                   if (isLong2(queenMoves[i].id)){
-                     goCell = document.getElementById(idd - 5)
-                     createBtn(goCell);
-                     move.push(goCell);
-                     dead.push(queenMoves[i]);
+                     if (checkingKill == false){
+                        goCell = document.getElementById(idd - 5)
+                        if (isOccupied2(goCell) == false){
+                           createBtn(goCell);
+                           move.push(goCell);
+                           dead.push(queenMoves[i]);
+                        }
+                       }else{
+                        if (isOccupied2(goCell) == false){
+                           goCell = document.getElementById(idd - 5)
+                           canAddChecked = true;
+                       }
+                                                           // checkovani
+                       }
+                   
                      break;
                   }else{
-                     goCell = document.getElementById(idd - 4)
-                     createBtn(goCell);
-                     move.push(goCell);
-                     dead.push(queenMoves[i]);
+                     if (checkingKill == false){
+                        goCell = document.getElementById(idd - 4)
+                        if (isOccupied2(goCell) == false){
+                           createBtn(goCell);
+                           move.push(goCell);
+                           dead.push(queenMoves[i]);
+                        }
+                       }else{
+                        if (isOccupied2(goCell) == false){
+                           goCell = document.getElementById(idd - 4)
+                           canAddChecked = true;
+                       }
+                                                           // checkovani
+                       }
+                  
                      break;
                   }
                   
                }else{                                                       // there starting to check everywhere
                   if (isOccupied2(queenMoves[i]) == false){
-                     createBtn(queenMoves[i]);
+                     if (checkingKill == false){
+                        createBtn(queenMoves[i]);
+                     }
+                  }else{
+                     break;
                   }
                   while(isEnd(idd) == false){
                     if (isLong2(idd)){
                        goCell = document.getElementById(idd - 5);
                        if (isOccupied2(goCell) == false){
-                          createBtn(goCell);
+                        if (checkingKill == false){
+                           createBtn(goCell);
+                        }
                        }else{
-                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -4)) == false){
-                             createBtn(document.getElementById(goCell.id - 4))
-                             move.push(document.getElementById(goCell.id - 4))
-                             dead.push(document.getElementById(goCell.id));
+                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -4)) == false && isSameTeam(goCell) == false){
+                           if (checkingKill == false){
+                              createBtn(document.getElementById(goCell.id - 4))
+                              move.push(document.getElementById(goCell.id - 4))
+                              dead.push(document.getElementById(goCell.id));
+                             }else{
+                              canAddChecked = true;
+                                                                 // checkovani
+                             }
+                            
                              break;
                           }else{
                              break;
@@ -462,12 +729,20 @@ function whereGo(coin){
                     }else{
                        goCell = document.getElementById(idd-4);              
                        if (isOccupied2(goCell) == false){
-                          createBtn(goCell);
+                        if (checkingKill == false){
+                           createBtn(goCell);
+                        }
                        }else{
-                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -5)) == false){
-                             createBtn(document.getElementById(goCell.id - 5))
-                             move.push(document.getElementById(goCell.id - 5))           // vytvarime button o 5 protoze jdeme ze short na long
-                             dead.push(document.getElementById(goCell.id));
+                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -5)) == false && isSameTeam(goCell) == false){
+                           if (checkingKill == false){
+                              createBtn(document.getElementById(goCell.id - 5))
+                              move.push(document.getElementById(goCell.id - 5))           // vytvarime button o 5 protoze jdeme ze short na long
+                              dead.push(document.getElementById(goCell.id));
+                             }else{
+                              canAddChecked = true;
+                                                                 // checkovani
+                             }
+                           
                              break;
                           }else{
                              break;
@@ -498,35 +773,71 @@ function whereGo(coin){
                 
                 let idd = queenMoves[i].id;
                 
-                if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+                if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
                   if (isLong2(queenMoves[i].id)){
-                     goCell = document.getElementById(idd - 5)
-                     createBtn(goCell);
-                     move.push(goCell);
-                     dead.push(queenMoves[i]);
+                     if (checkingKill == false){
+                        goCell = document.getElementById(idd - 5)
+                        if (isOccupied2(goCell) == false){
+                           createBtn(goCell);
+                           move.push(goCell);
+                           dead.push(queenMoves[i]);
+                        }
+                       }else{
+                        if (isOccupied2(goCell) == false){
+                           goCell = document.getElementById(idd - 5)
+                           canAddChecked = true;
+                       }
+                                                           // checkovani
+                       }
+                   
                      break;
                   }else{
-                     goCell = document.getElementById(idd - 4)
-                     createBtn(goCell);
-                     move.push(goCell);
-                     dead.push(queenMoves[i]);
+                     if (checkingKill == false){
+                        goCell = document.getElementById(idd - 4)
+                        if (isOccupied2(goCell) == false){
+                           createBtn(goCell);
+                           move.push(goCell);
+                           dead.push(queenMoves[i]);
+                        }
                      break;
+                       }else{
+                        if (isOccupied2(goCell) == false){
+                           goCell = document.getElementById(idd - 4)
+                           canAddChecked = true;
+                       }
+                                                           // checkovani
+                       }
+                   
                   }
                   
                }else{                                                       // there starting to check everywhere
                   if (isOccupied2(queenMoves[i]) == false){
-                     createBtn(queenMoves[i]);
+                     if (checkingKill == false){
+                        createBtn(queenMoves[i]);
+                     }
+                  }else{
+                     i++;
+                     continue;
                   }
                   while(isEnd(idd) == false){
                     if (isLong2(idd)){
                        goCell = document.getElementById(idd - 5);
                        if (isOccupied2(goCell) == false){
-                          createBtn(goCell);
+                        if (checkingKill == false){
+                           createBtn(goCell);
+                        }
                        }else{
-                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -4)) == false){
-                             createBtn(document.getElementById(goCell.id - 4))
-                             move.push(document.getElementById(goCell.id - 4))
-                             dead.push(document.getElementById(goCell.id));
+                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -4)) == false && isSameTeam(goCell) == false){
+                           if (checkingKill == false){
+                              createBtn(document.getElementById(goCell.id - 4))
+                              move.push(document.getElementById(goCell.id - 4))
+                              dead.push(document.getElementById(goCell.id));
+                           break;
+                             }else{
+                              canAddChecked = true;
+                                                                 // checkovani
+                             }
+                            
                              break;
                           }else{
                              break;
@@ -538,12 +849,21 @@ function whereGo(coin){
                     }else{
                        goCell = document.getElementById(idd-4);              
                        if (isOccupied2(goCell) == false){
-                          createBtn(goCell);
+                        if (checkingKill == false){
+                           createBtn(goCell);
+                        }
                        }else{
-                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -5)) == false){
-                             createBtn(document.getElementById(goCell.id - 5))
+                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -5)) == false && isSameTeam(goCell) == false){
+                           if (checkingKill == false){
+                              createBtn(document.getElementById(goCell.id - 5))
                              move.push(document.getElementById(goCell.id - 5))           // vytvarime button o 5 protoze jdeme ze short na long
                              dead.push(document.getElementById(goCell.id));
+                           break;
+                             }else{
+                              canAddChecked = true;
+                                                                 // checkovani
+                             }
+                            
                              break;
                           }else{
                              break;
@@ -561,34 +881,72 @@ function whereGo(coin){
                
                 let idd = queenMoves[i].id;
                 
-                if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+                if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
                   if (isLong2(queenMoves[i].id)){
-                     goCell = document.getElementById(parseInt(idd) + 5)
-                     createBtn(goCell);
-                     move.push(goCell);
-                     dead.push(queenMoves[i]);
+                     if (checkingKill == false){
+                        goCell = document.getElementById(parseInt(idd) + 5)
+                        if (isOccupied2(goCell) == false){
+                           createBtn(goCell);
+                           move.push(goCell);
+                           dead.push(queenMoves[i]);
+                        }
+                     break;
+                       }else{
+                        if (isOccupied2(goCell) == false){
+                           goCell = document.getElementById(parseInt(idd) + 5)
+                           canAddChecked = true;
+                       }
+                                                           // checkovani
+                       }
+                   
                      break;
                   }else{
-                     goCell = document.getElementById(parseInt(idd) + 6)
-                     createBtn(goCell);
-                     move.push(goCell);
-                     dead.push(queenMoves[i]);
+                     if (checkingKill == false){
+                        goCell = document.getElementById(parseInt(idd) + 6)
+                        if (isOccupied2(goCell) == false){
+                           createBtn(goCell);
+                           move.push(goCell);
+                           dead.push(queenMoves[i]);
+                        }
+                     break;
+                       }else{
+                        if (isOccupied2(goCell) == false){
+                           goCell = document.getElementById(parseInt(idd) + 6)
+                           canAddChecked = true;
+                       }
+                                                           // checkovani
+                       }
+                    
                      break;
                   }
                } else{                                                      // there starting to check everywhere
                   if (isOccupied2(queenMoves[i]) == false){
-                     createBtn(queenMoves[i]);
+                     if (checkingKill == false){
+                        createBtn(queenMoves[i]);
+                     }
+                  }else{
+                     i++;
+                     continue;
                   }
                   while(isEnd(idd) == false){
                     if (isLong2(idd)){
                        goCell = document.getElementById(parseInt(idd) + 5);
                        if (isOccupied2(goCell) == false){
-                          createBtn(goCell);
+                        if (checkingKill == false){
+                           createBtn(goCell);
+                        }
                        }else{
-                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-6))) == false){
-                             createBtn(document.getElementById(parseInt(goCell.id) + 6))
-                             move.push(document.getElementById(parseInt(goCell.id) + 6))
-                             dead.push(document.getElementById(goCell.id));
+                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-6))) == false && isSameTeam(goCell) == false){
+                           if (checkingKill == false){
+                              createBtn(document.getElementById(parseInt(goCell.id) + 6))
+                              move.push(document.getElementById(parseInt(goCell.id) + 6))
+                              dead.push(document.getElementById(goCell.id));
+                           break;
+                             }else{
+                              canAddChecked = true;
+                                                                 // checkovani
+                             }
+                         
                              break;
                           }else{
                              break;
@@ -601,12 +959,21 @@ function whereGo(coin){
                        goCell = document.getElementById(parseInt(idd) + 6);      
                        console.log(goCell)        
                        if (isOccupied2(goCell) == false){
-                          createBtn(goCell);
+                        if (checkingKill == false){
+                           createBtn(goCell);
+                        }
                        }else{
-                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false){
-                             createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                          if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false && isSameTeam(goCell) == false){
+                           if (checkingKill == false){
+                              createBtn(document.getElementById(parseInt(goCell.id) + 5))
                              move.push(document.getElementById(parseInt(goCell.id) + 5))           // vytvarime button o 4 protoze jdeme ze short na long
                              dead.push(document.getElementById(goCell.id));
+                           break;
+                             }else{
+                              canAddChecked = true;
+                                                                 // checkovani
+                             }
+                           
                              break;
                           }else{
                              break;
@@ -637,26 +1004,52 @@ function whereGo(coin){
            if (i == 0){
              
               let idd = queenMoves[i].id;
-              if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
-               goCell = document.getElementById(idd - 6)
-               createBtn(goCell);
-               move.push(goCell);
-               dead.push(queenMoves[i]);
+              if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
+               if (checkingKill == false){
+                  goCell = document.getElementById(idd - 6)
+                  if (isOccupied2(goCell) == false){
+                     createBtn(goCell);
+                     move.push(goCell);
+                     dead.push(queenMoves[i]);
+                  }
+               break;
+                 }else{
+                  goCell = document.getElementById(idd - 6)
+                  if (isOccupied2(goCell) == false){
+                     canAddChecked = true;
+                 }
+                                                     // checkovani
+                 }
+             
                break;
              }else{                                                       // there starting to check everywhere
                if (isOccupied2(queenMoves[i]) == false){
-                  createBtn(queenMoves[i]);
+                  if (checkingKill == false){
+                     createBtn(queenMoves[i]);
+                  }
+               }else{
+                  i++;
+                  continue;
                }
                while(isEnd(idd) == false){
                  if (isLong2(idd)){
                     goCell = document.getElementById(idd-6);
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -5)) == false){
-                          createBtn(document.getElementById(goCell.id - 5))
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -5)) == false && isSameTeam(goCell) == false){
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(goCell.id - 5))
                           move.push(document.getElementById(goCell.id - 5))
                           dead.push(document.getElementById(goCell.id));
+                        break;
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+                        
                           break;
                           
                        }else{
@@ -669,12 +1062,21 @@ function whereGo(coin){
                  }else{
                     goCell = document.getElementById(idd-5);              
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -6)) == false){
-                          createBtn(document.getElementById(goCell.id - 6))
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id -6)) == false && isSameTeam(goCell) == false){
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(goCell.id - 6))
                           move.push(document.getElementById(goCell.id - 6))           // vytvarime button o 6 protoze jdeme ze short na long
                           dead.push(document.getElementById(goCell.id));
+                        break;
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+                          
                           break;
                        }else{
                           break;
@@ -689,26 +1091,52 @@ function whereGo(coin){
            if (i == 1){
               
               let idd = queenMoves[i].id;
-              if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
-               goCell = document.getElementById(parseInt(idd) + 4)
-               createBtn(goCell);
-               move.push(goCell);
-               dead.push(queenMoves[i]);
+              if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
+               if (checkingKill == false){
+                  goCell = document.getElementById(parseInt(idd) + 4)
+                  if (isOccupied2(goCell) == false){
+                     createBtn(goCell);
+                     move.push(goCell);
+                     dead.push(queenMoves[i]);
+                  }
+               break;
+                 }else{
+                  if (isOccupied2(goCell) == false){
+                     goCell = document.getElementById(parseInt(idd) + 4)
+                     canAddChecked = true;
+                 }
+                                                     // checkovani
+                 }
+            
                break;
             } else{                                                              // there starting to check everywhere
                if (isOccupied2(queenMoves[i]) == false){
-                  createBtn(queenMoves[i]);
+                  if (checkingKill == false){
+                     createBtn(queenMoves[i]);
+                  }
+               }else{
+                  i++;
+                  continue;
                }
                while(isEnd(idd) == false){
                  if (isLong2(idd)){
                     goCell = document.getElementById(parseInt(idd) + 4);
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false){
-                          createBtn(document.getElementById(parseInt(goCell.id) + 5))
-                          move.push(document.getElementById(parseInt(goCell.id) + 5))
-                          dead.push(document.getElementById(goCell.id));
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false && isSameTeam(goCell) == false){
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                           move.push(document.getElementById(parseInt(goCell.id) + 5))
+                           dead.push(document.getElementById(goCell.id));
+                        break;
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+                          
                           break;
                        }else{
                           break;
@@ -721,12 +1149,21 @@ function whereGo(coin){
                     goCell = document.getElementById(parseInt(idd) + 5);      
                     console.log(goCell)        
                     if (isOccupied2(goCell) == false){
-                       createBtn(goCell);
+                     if (checkingKill == false){
+                        createBtn(goCell);
+                     }
                     }else{
-                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-4))) == false){
-                          createBtn(document.getElementById(parseInt(goCell.id) + 4))
-                          move.push(document.getElementById(parseInt(goCell.id) + 4))           // vytvarime button o 4 protoze jdeme ze short na long
-                          dead.push(document.getElementById(goCell.id));
+                       if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-4))) == false && isSameTeam(goCell) == false){
+                        if (checkingKill == false){
+                           createBtn(document.getElementById(parseInt(goCell.id) + 4))
+                           move.push(document.getElementById(parseInt(goCell.id) + 4))           // vytvarime button o 4 protoze jdeme ze short na long
+                           dead.push(document.getElementById(goCell.id));
+                        break;
+                          }else{
+                           canAddChecked = true;
+                                                              // checkovani
+                          }
+                         
                           break;
                        }else{
                           break;
@@ -765,36 +1202,77 @@ function whereGo(coin){
                  
                    let idd = queenMoves[i].id;
                    console.log(idd)
-                   
-                   if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+                   goCell = document.getElementById(idd - 6)
+                   if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false && isOccupied2(goCell) == false){                             // checking for kill around queen
                      if (isLong2(queenMoves[i].id)){
-                        goCell = document.getElementById(idd - 6)
-                        createBtn(goCell);
-                        move.push(goCell);
-                        dead.push(queenMoves[i]);
+                        if (checkingKill == false){
+                           goCell = document.getElementById(idd - 6)
+                           if (isOccupied2(goCell) == false){
+                              createBtn(goCell);
+                              move.push(goCell);
+                              dead.push(queenMoves[i]);
+                           }
+                       
+                          }else{
+                           if (isOccupied2(goCell) == false){
+                              if (isOccupied2(goCell) == false){
+                                 goCell = document.getElementById(idd - 6)
+                                 canAddChecked = true;
+                             }
+                           }
+                          
+                                                              // checkovani
+                          }
+                      
                         
                      }else{
-                        goCell = document.getElementById(idd - 5)
-                        createBtn(goCell);
-                        move.push(goCell);
-                        dead.push(queenMoves[i]);
+                        if (checkingKill == false){
+                           goCell = document.getElementById(idd - 5)
+                           if (isOccupied2(goCell) == false){
+                              createBtn(goCell);
+                              move.push(goCell);
+                              dead.push(queenMoves[i]);
+                           }
+                       
+                          }else{
+                           if (isOccupied2(goCell) == false){
+                              goCell = document.getElementById(idd - 5)
+                              canAddChecked = true;
+                          }
+                                                              // checkovani
+                          }
+                      
                         
                      }
                      
                    }else{                       // there starting to check everywhere
                      if (isOccupied2(queenMoves[i]) == false){
-                        createBtn(queenMoves[i]);
+                        if (checkingKill == false){
+                           createBtn(queenMoves[i]);
+                        }
+                     }else{
+                        i++;
+                        continue;
                      }
                      while(isEnd(idd) == false){
                        if (isLong2(idd)){
                           goCell = document.getElementById(idd-6);
                           if (isOccupied2(goCell) == false){
-                             createBtn(goCell);
+                           if (checkingKill == false){
+                              createBtn(goCell);
+                           }
                           }else{
-                             if (isEnd(goCell.id) == false&& isOccupied2(document.getElementById(goCell.id - 5)) == false){
-                                createBtn(document.getElementById(goCell.id - 5))
-                                move.push(document.getElementById(goCell.id - 5))
-                                dead.push(document.getElementById(goCell.id));
+                             if (isEnd(goCell.id) == false&& isOccupied2(document.getElementById(goCell.id - 5)) == false && isSameTeam(goCell) == false){
+                              if (checkingKill == false){
+                                 createBtn(document.getElementById(goCell.id - 5))
+                                 move.push(document.getElementById(goCell.id - 5))
+                                 dead.push(document.getElementById(goCell.id));
+                             
+                                }else{
+                                 canAddChecked = true;
+                                                                    // checkovani
+                                }
+                               
                                 break;
                              }else{
                                 break;
@@ -806,12 +1284,21 @@ function whereGo(coin){
                        }else{
                           goCell = document.getElementById(idd-5);              
                           if (isOccupied2(goCell) == false){ 
-                             createBtn(goCell);
+                           if (checkingKill == false){
+                              createBtn(goCell);
+                           }
                           }else{
-                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - 6)) == false){                                 //kill target cant be at the end of a grid and goCell cant be occupied
-                                createBtn(document.getElementById(goCell.id - 6))
-                                move.push(document.getElementById(goCell.id - 6))           // vytvarime button o 6 protoze jdeme ze short na long
-                                dead.push(document.getElementById(goCell.id));
+                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - 6)) == false && isSameTeam(goCell) == false){          
+                              if (checkingKill == false){
+                                 createBtn(document.getElementById(goCell.id - 6))
+                                 move.push(document.getElementById(goCell.id - 6))           // vytvarime button o 6 protoze jdeme ze short na long
+                                 dead.push(document.getElementById(goCell.id));
+                             
+                                }else{
+                                 canAddChecked = true;
+                                                                    // checkovani
+                                }
+                              
                                 break;
                              }else{
                                 break;
@@ -830,37 +1317,79 @@ function whereGo(coin){
                 if (i == 1){
                   let idd = queenMoves[i].id;
                   console.log(idd)
-                   
-                  if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+                  
+                  
+                  if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
                      if (isLong2(queenMoves[i].id)){
-                        goCell = document.getElementById(idd - 5)
-                        createBtn(goCell);
-                        move.push(goCell);
-                        dead.push(queenMoves[i]);
+                        if (checkingKill == false){
+                           goCell = document.getElementById(idd - 5)
+                           if (isOccupied2(goCell) == false){
+                              createBtn(goCell);
+                              move.push(goCell);
+                              dead.push(queenMoves[i]);
+                           }
+                           
+                       
+                          }else{
+                           if (isOccupied2(goCell) == false){
+                              goCell = document.getElementById(idd - 5)
+                              canAddChecked = true;
+                           }
+                          
+                                                              // checkovani
+                          }
+                      
                        
                      }else{
-                        goCell = document.getElementById(idd - 4)
-                        createBtn(goCell);
-                        move.push(goCell);
-                        dead.push(queenMoves[i]);
+                        if (checkingKill == false){
+                           goCell = document.getElementById(idd - 4)
+                           if (isOccupied2(goCell) == false){
+                              createBtn(goCell);
+                              move.push(goCell);
+                              dead.push(queenMoves[i]);
+                           }
+                       
+                          }else{
+                           if (isOccupied2(goCell) == false){
+                              goCell = document.getElementById(idd - 4)
+                              canAddChecked = true;
+                           }
+                                                              // checkovani
+                          }
+                      
                        
                      }
                      
                   }else{                                                       // there starting to check everywhere
                      if (isOccupied2(queenMoves[i]) == false){
-                        createBtn(queenMoves[i]);
+                        if (checkingKill == false){
+                           createBtn(queenMoves[i]);
+                        }
+                     }else{
+                        i++;
+                        continue;
                      }
                      while(isEnd(idd) == false){
                        if (isLong2(idd)){
                           goCell = document.getElementById(idd - 5);
                           if (isOccupied2(goCell) == false){
-                             createBtn(goCell);
+                           if (checkingKill == false){
+                              createBtn(goCell);
+                           }
                           }else{
-                             if (isEnd(goCell.id) == false&& isOccupied2(document.getElementById(goCell.id - 4)) == false){
-                                createBtn(document.getElementById(goCell.id - 4))
-                                move.push(document.getElementById(goCell.id - 4))
+                             console.log(goCell);
+                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - 4)) == false && isSameTeam(goCell) == false){
+                              if (checkingKill == false){
+                                 createBtn(document.getElementById(goCell.id - 4))
+                                move.push(document.getElementById(goCell.id - 4))           // vytvarime button o 5 protoze jdeme ze short na long
                                 dead.push(document.getElementById(goCell.id));
-                                break;
+                             
+                                }else{
+                                 canAddChecked = true;
+                                                                    // checkovani
+                                }
+                                
+                               
                              }else{
                                 break;
                                 
@@ -871,13 +1400,22 @@ function whereGo(coin){
                        }else{
                           goCell = document.getElementById(idd-4);              
                           if (isOccupied2(goCell) == false){
-                             createBtn(goCell);
+                           if (checkingKill == false){
+                              createBtn(goCell);
+                           }
                           }else{
-                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - 5)) == false){
-                                createBtn(document.getElementById(goCell.id - 5))
+                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - 5)) == false && isSameTeam(goCell) == false){
+                              if (checkingKill == false){
+                                 createBtn(document.getElementById(goCell.id - 5))
                                 move.push(document.getElementById(goCell.id - 5))           // vytvarime button o 5 protoze jdeme ze short na long
                                 dead.push(document.getElementById(goCell.id));
-                                break;
+                             
+                                }else{
+                                 canAddChecked = true;
+                                                                    // checkovani
+                                }
+                              
+                                
                              }else{
                                 break;
                              }
@@ -893,35 +1431,72 @@ function whereGo(coin){
                 if (i == 2){
                   let idd = queenMoves[i].id;
                   
-                  if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+                  if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
                      if (isLong2(queenMoves[i].id)){
-                        goCell = document.getElementById(parseInt(idd) + 4)
-                        createBtn(goCell);
-                        move.push(goCell);
-                        dead.push(queenMoves[i]);
+                        if (checkingKill == false){
+                           goCell = document.getElementById(parseInt(idd) + 4)
+                           if (isOccupied2(goCell) == false){
+                              createBtn(goCell);
+                              move.push(goCell);
+                              dead.push(queenMoves[i]);
+                           }
+                          }else{
+                           if (isOccupied2(goCell) == false){
+                              goCell = document.getElementById(parseInt(idd) + 4)
+                              canAddChecked = true;
+                          }
+                                                              // checkovani
+                          }
+                     
                         
                      }else{
-                        goCell = document.getElementById(parseInt(idd) + 5)
-                        createBtn(goCell);
-                        move.push(goCell);
-                        dead.push(queenMoves[i]);
+                        if (checkingKill == false){
+                           goCell = document.getElementById(parseInt(idd) + 5)
+                           if (isOccupied2(goCell) == false){
+                              createBtn(goCell);
+                              move.push(goCell);
+                              dead.push(queenMoves[i]);
+                           }
+                     
+                          }else{
+                           if (isOccupied2(goCell) == false){
+                              goCell = document.getElementById(parseInt(idd) + 5)
+                              canAddChecked = true;
+                          }
+                                                              // checkovani
+                          }
+                      
                        
                      }
                   } else{                                                              // there starting to check everywhere
                      if (isOccupied2(queenMoves[i]) == false){
-                        createBtn(queenMoves[i]);
+                        if (checkingKill == false){
+                           createBtn(queenMoves[i]);
+                        }
+                     }else{
+                        i++;
+                        continue;
                      }
                      while(isEnd(idd) == false){
                        if (isLong2(idd)){
                           goCell = document.getElementById(parseInt(idd) + 4);
                           if (isOccupied2(goCell) == false){
-                             createBtn(goCell);
+                           if (checkingKill == false){
+                              createBtn(goCell);
+                           }
                           }else{
-                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false){
-                                createBtn(document.getElementById(parseInt(goCell.id) + 5))
-                                move.push(document.getElementById(parseInt(goCell.id) + 5))
-                                dead.push(document.getElementById(goCell.id));
-                                break;
+                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false && isSameTeam(goCell) == false){
+                              if (checkingKill == false){
+                                 createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                                 move.push(document.getElementById(parseInt(goCell.id) + 5))
+                                 dead.push(document.getElementById(goCell.id));
+                            
+                                }else{
+                                 canAddChecked = true;
+                                                                    // checkovani
+                                }
+                              
+                               
                              }else{
                                 break;
                                 
@@ -933,13 +1508,22 @@ function whereGo(coin){
                           goCell = document.getElementById(parseInt(idd) + 5);      
                           console.log(goCell)        
                           if (isOccupied2(goCell) == false){
-                             createBtn(goCell);
+                           if (checkingKill == false){
+                              createBtn(goCell);
+                           }
                           }else{
-                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-4))) == false){
-                                createBtn(document.getElementById(parseInt(goCell.id) + 4))
-                                move.push(document.getElementById(parseInt(goCell.id) + 4))           // vytvarime button o 4 protoze jdeme ze short na long
-                                dead.push(document.getElementById(goCell.id));
-                                break;
+                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-4))) == false && isSameTeam(goCell) == false){
+                              if (checkingKill == false){
+                                 createBtn(document.getElementById(parseInt(goCell.id) + 4))
+                                 move.push(document.getElementById(parseInt(goCell.id) + 4))           // vytvarime button o 4 protoze jdeme ze short na long
+                                 dead.push(document.getElementById(goCell.id));
+                            
+                                }else{
+                                 canAddChecked = true;
+                                                                    // checkovani
+                                }
+                              
+                               
                              }else{
                                 break;
                              }
@@ -955,35 +1539,72 @@ function whereGo(coin){
                 if (i == 3){
                   let idd = queenMoves[i].id;
                   
-                  if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false){                             // checking for kill around queen
+                  if (isOccupied2(queenMoves[i]) && isEnd(queenMoves[i].id) == false && isSameTeam(queenMoves[i]) == false){                             // checking for kill around queen
                      if (isLong2(queenMoves[i].id)){
-                        goCell = document.getElementById(parseInt(idd) + 5)
-                        createBtn(goCell);
-                        move.push(goCell);
-                        dead.push(queenMoves[i]);
+                        if (checkingKill == false){
+                           goCell = document.getElementById(parseInt(idd) + 5)
+                           if (isOccupied2(goCell) == false){
+                              createBtn(goCell);
+                              move.push(goCell);
+                              dead.push(queenMoves[i]);
+                           }
+                      
+                          }else{
+                           if (isOccupied2(goCell) == false){
+                              goCell = document.getElementById(parseInt(idd) + 5)
+                              canAddChecked = true;
+                          }
+                                                              // checkovani
+                          }
+                      
                       
                      }else{
-                        goCell = document.getElementById(parseInt(idd) + 6)
-                        createBtn(goCell);
-                        move.push(goCell);
-                        dead.push(queenMoves[i]);
+                        if (checkingKill == false){
+                           goCell = document.getElementById(parseInt(idd) + 6)
+                           if (isOccupied2(goCell) == false){
+                              createBtn(goCell);
+                              move.push(goCell);
+                              dead.push(queenMoves[i]);
+                           }
+                       
+                          }else{
+                           if (isOccupied2(goCell) == false){
+                              goCell = document.getElementById(parseInt(idd) + 6)
+                              canAddChecked = true;
+                          }
+                                                              // checkovani
+                          }
+                     
                         
                      }
                   } else{                                                      // there starting to check everywhere
                      if (isOccupied2(queenMoves[i]) == false){
-                        createBtn(queenMoves[i]);
+                        if (checkingKill == false){
+                           createBtn(queenMoves[i]);
+                        }
+                     }else{
+                        break;           // we can leave there "break"
                      }
                      while(isEnd(idd) == false){
                        if (isLong2(idd)){
                           goCell = document.getElementById(parseInt(idd) + 5);
                           if (isOccupied2(goCell) == false){
-                             createBtn(goCell);
+                           if (checkingKill == false){
+                              createBtn(goCell);
+                           }
                           }else{
-                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-6))) == false){
-                                createBtn(document.getElementById(parseInt(goCell.id) + 6))
-                                move.push(document.getElementById(parseInt(goCell.id) + 6))
-                                dead.push(document.getElementById(goCell.id));
-                                break;
+                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-6))) == false && isSameTeam(goCell) == false){
+                              if (checkingKill == false){
+                                 createBtn(document.getElementById(parseInt(goCell.id) + 6))
+                                 move.push(document.getElementById(parseInt(goCell.id) + 6))
+                                 dead.push(document.getElementById(goCell.id));
+                            
+                                }else{
+                                 canAddChecked = true;
+                                                                    // checkovani
+                                }
+                                
+                                
                              }else{
                                 break;
                                 
@@ -995,13 +1616,22 @@ function whereGo(coin){
                           goCell = document.getElementById(parseInt(idd) + 6);      
                           console.log(goCell)        
                           if (isOccupied2(goCell) == false){
-                             createBtn(goCell);
+                           if (checkingKill == false){
+                              createBtn(goCell);
+                           }
                           }else{
-                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false){
-                                createBtn(document.getElementById(parseInt(goCell.id) + 5))
-                                move.push(document.getElementById(parseInt(goCell.id) + 5))           // vytvarime button o 4 protoze jdeme ze short na long
-                                dead.push(document.getElementById(goCell.id));
-                                break;
+                             if (isEnd(goCell.id) == false && isOccupied2(document.getElementById(goCell.id - (-5))) == false && isSameTeam(goCell) == false){
+                              if (checkingKill == false){
+                                 createBtn(document.getElementById(parseInt(goCell.id) + 5))
+                                 move.push(document.getElementById(parseInt(goCell.id) + 5))           // vytvarime button o 4 protoze jdeme ze short na long
+                                 dead.push(document.getElementById(goCell.id));
+                             
+                                }else{
+                                 canAddChecked = true;
+                                                                    // checkovani
+                                }
+                               
+                               
                              }else{
                                 break;
                              }
@@ -1030,7 +1660,7 @@ function whereGo(coin){
    if (turn == true){
       cell = document.getElementById(parseInt(id)-5);
      
-      if (isCorner(coin) && isStarter(coin.id) == true){
+      if (isCorner(coin) && isStarter(coin.parentNode.id) == false){
          cell2 =  document.getElementById(parseInt(id)+5);
          
          
@@ -1047,7 +1677,10 @@ function whereGo(coin){
       if (isCorner(coin) && !isOccupied(cell)){
          cell = document.getElementById(parseInt(id)-5);
          if (canForward){
-            createBtn(cell);
+            if (checkingKill == false){
+               createBtn(cell);
+            }
+            
          }
         
          
@@ -1063,7 +1696,20 @@ function whereGo(coin){
                   moveCoin(target);
                   killEnemy(dead, move, target);
                   clearButtons(buttons);
-                  changeTurn(turn);
+                  console.log(killed)
+                  if (killed){                         // there checking for multiple kills in 1 side
+                     whereGo(lastMove)
+                     if (move.length == 0){
+                        clearButtons();
+                        changeTurn(turn);
+                        killed = false;
+                        checkForKill();
+                     }
+                  }else{
+                     changeTurn(turn);
+                     killed = false;
+                     checkForKill();
+                  }
                }
             })
      
@@ -1111,7 +1757,9 @@ function whereGo(coin){
             if (canCreate && canKill == false){
                canKillLeft = true;
                if (canForward){
-                  createBtn(cell);
+                  if (checkingKill == false){
+                     createBtn(cell);
+                  }
                }
              
             }
@@ -1121,27 +1769,25 @@ function whereGo(coin){
            
          }
          side = "right";
+         console.log(cell2.id)
          if (isOccupied(cell2) == false){
             //cell2.classList.add("canGo");
             if (canCreate && canKill == false){
                if (canForward){
-                  createBtn(cell2);
+                  if (checkingKill == false){
+                     createBtn(cell2);
+                  }
                }
                
             }
          }
-       
-         
-        
-        
-        
       }
      }else{
       cell = document.getElementById(parseInt(id)+5);
-       
-      if (isCorner(coin) && isStarter(coin.id) == true){
+       console.log(coin);
+      if (isCorner(coin) && isStarter(coin.parentNode.id) == false){
          cell2 = document.getElementById(parseInt(id) - 5);
-      
+         console.log(cell2);
          if (isStarter(cell2.id) == false && isOccupied2(cell2) == true && isWhite(cell2)){
             corner = true;
             showBackKill(cell2.id);
@@ -1155,7 +1801,9 @@ function whereGo(coin){
       if (isCorner(coin) && !isOccupied(cell)){
          cell = document.getElementById(parseInt(id)+5);
          if (canForward){
-            createBtn(cell);
+            if (checkingKill == false){
+               createBtn(cell);
+            }
          }
         
         
@@ -1171,7 +1819,21 @@ function whereGo(coin){
                   moveCoin(target);
                   killEnemy(dead, move, target);
                   clearButtons(buttons);
-                  changeTurn(turn);
+                  console.log(killed)
+                  if (killed){                         // there checking for multiple kills in 1 side
+                     whereGo(lastMove)
+                     if (move.length == 0){
+                        clearButtons();
+                        changeTurn(turn);
+                        killed = false;
+                        checkForKill();
+                     }
+                  }else{
+                     changeTurn(turn);
+                     killed = false;
+                     checkForKill();
+                  }
+                  
                }
             })
      
@@ -1209,7 +1871,9 @@ function whereGo(coin){
             if (canCreate && canKill == false){
                canKillLeft = true;
                if (canForward){
-                  createBtn(cell);
+                  if (checkingKill == false){
+                     createBtn(cell);
+                  }
                }
             }
             if (canCreate == false){
@@ -1219,27 +1883,24 @@ function whereGo(coin){
            
          }  
          side = "left";
-         
+         console.log(cell2)
          if (isOccupied(cell2) == false){
             //cell2.classList.add("canGo");
             if (canCreate && canKill == false){
                canKillLeft = true;
                if (canForward){
-                  createBtn(cell2);
+                  if (checkingKill == false){
+                     createBtn(cell2);
+                  }
                }
             }
            
          }
-   
-         
-        
-        
-        
       }
   }
 
   
-  }
+}
  
    var buttons = document.querySelectorAll('.button');
    buttons.forEach(but => {
@@ -1250,13 +1911,101 @@ function whereGo(coin){
          moveCoin(target);
          killEnemy(dead, move, target);
          clearButtons(buttons);
-         changeTurn(turn);
+         console.log(killed)
+         if (killed){                         // there checking for multiple kills in 1 side
+            whereGo(lastMove)
+            if (move.length == 0){
+               clearButtons();
+               changeTurn(turn);
+               killed = false;
+               checkForKill();
+            }
+         }else{
+            changeTurn(turn);
+            killed = false;
+            checkForKill();
+         }
+
+         
       }
    })
+}
+
+
+function checkForKill(){
+   checkedCoins = [];
+   let img;
+   let src;
+   if (turn == true){
+      coins.forEach(coin => {
+         
+         img = document.getElementById(coin.parentNode.id).getElementsByTagName("img")[0];
+         src = img.getAttribute('src');
+         console.log(src);
+         if (src.includes("white") || src.includes("White") ){                      
+            checkingKill = true;
+            whereGo(coin);
+            if (canAddChecked){
+               checkedCoins.push(coin);
+            }
+            checkingKill = false;
+          }
+      })
+      console.log(checkedCoins);
+      if(checkedCoins.length > 0){  
+         showOnlyMove();
+      }
+   }
+
+   if (turn == false){
+      coins.forEach(coin => {
+         
+         img = document.getElementById(coin.parentNode.id).getElementsByTagName("img")[0];
+         src = img.getAttribute('src');
+         console.log(src);
+         if (src.includes("black") || src.includes("Black") ){                      
+            checkingKill = true;
+            whereGo(coin);
+            if (canAddChecked){
+               checkedCoins.push(coin);
+            }
+            checkingKill = false;
+          }
+      })
+      console.log(checkedCoins);
+      if(checkedCoins.length > 0){  
+         showOnlyMove();
+      }
+   }
+}
+
+function showOnlyMove(){
+   console.log(coins)
+   coins.forEach(coin => {
+    
+      if (coin.src.includes("black") || coin.src.includes("Black") || coin.src.includes("white") || coin.src.includes("White")){
+         console.log(coin.src)
+          document.getElementById(coin.parentNode.id).style.pointerEvents = "none";
+         
+       
+      }
+     
+    
+     
+      
+   })
+  
+      
+   checkedCoins.forEach(cc => {
+      document.getElementById(cc.parentNode.id).style.pointerEvents = "auto";
+   })
+   //stopMove();
 
 
 
 }
+
+
 
 function isLong(coin){
   var id = coin.parentNode.id;
@@ -1335,7 +2084,8 @@ function isCorner(coin){
 
 
 
-function isOccupied(celll){        
+function isOccupied(celll){
+   console.log(celll.id)        
    let img = document.getElementById(celll.id).getElementsByTagName("img")[0];
    let src = img.getAttribute('src');
    console.log(src);
@@ -1408,8 +2158,9 @@ function stopMove(){
           if (img[i].src.includes("black") || img[i].src.includes("Black")){
             document.getElementById(img[i].parentNode.id).style.pointerEvents = "none";
           }
-          if (img[i].src.includes("white") || img[i].src.includes("Wlack")){
+          if (img[i].src.includes("white") || img[i].src.includes("White")){
             document.getElementById(img[i].parentNode.id).style.pointerEvents = "auto";
+            console.log( document.getElementById(img[i].parentNode.id));
           }
          
        }
@@ -1443,7 +2194,8 @@ function showKill(id){
 
    if (turn == true){
           console.log(side);
-          
+          console.log(cell)
+          console.log(activeCoin.parentNode.id)
          if (isMid(activeCoin.parentNode.id) == "left"){
             goCell = document.getElementById(activeCoin.parentNode.id - 9);
             cell = document.getElementById(activeCoin.parentNode.id - 4)
@@ -1452,9 +2204,15 @@ function showKill(id){
                if (canKillLeft && !backIsActive){
                   clearButtons();
                }
-               createBtn(goCell);
-               dead.push(cell);
-               move.push(goCell);
+               if (checkingKill == false){
+              
+                  createBtn(goCell);
+                  dead.push(cell);
+                  move.push(goCell);
+                 }else{
+                  canAddChecked = true;
+                  console.log("kill")                                      // checkovani
+                 }
             }
 
          }else if (isMid(activeCoin.parentNode.id) == "right"){
@@ -1462,9 +2220,15 @@ function showKill(id){
             cell = document.getElementById(activeCoin.parentNode.id - 6)
             if (isOccupied2(cell) == true && isOccupied2(goCell) == false && isWhite(cell) == false){
                canKill = true;
-               createBtn(goCell);
-               dead.push(cell);
-               move.push(goCell);
+               if (checkingKill == false){
+              
+                  createBtn(goCell);
+                  dead.push(cell);
+                  move.push(goCell);
+                 }else{
+                  canAddChecked = true;
+                                                     // checkovani
+                 }
             }
          
          }else{
@@ -1474,9 +2238,15 @@ function showKill(id){
               goCell = document.getElementById(cell.id - 4);
               if (isOccupied2(goCell) == false && isWhite(cell) == false){
                  
-               createBtn(goCell);
-               dead.push(cell);
-               move.push(goCell);
+               if (checkingKill == false){
+              
+                  createBtn(goCell);
+                  dead.push(cell);
+                  move.push(goCell);
+                 }else{
+                  canAddChecked = true;
+                                                     // checkovani
+                 }
               }
               
               return;
@@ -1485,9 +2255,15 @@ function showKill(id){
               canCreate = false;
               goCell = document.getElementById(cell.id - 6);
               if (isOccupied2(goCell) == false && isWhite(cell) == false){
-               createBtn(goCell);
-               dead.push(cell);
-               move.push(goCell);
+               if (checkingKill == false){
+              
+                  createBtn(goCell);
+                  dead.push(cell);
+                  move.push(goCell);
+                 }else{
+                  canAddChecked = true;
+                                                   // checkovani
+                 }
               }
               return;
             }else{
@@ -1499,9 +2275,16 @@ function showKill(id){
                  }
                  if (isOccupied2(goCell) == false && isWhite(cell) == false){
                     canKill = true;
-                  createBtn(goCell);
-                  dead.push(cell);
-                  move.push(goCell);
+                    if (checkingKill == false){
+                     createBtn(goCell);
+                     dead.push(cell);
+                     move.push(goCell);
+                    }else{
+                       console.log(goCell);
+                       canAddChecked = true;
+                       console.log("kill")                             // checkovani
+                    }
+                  
                  }
                  return;
               }
@@ -1517,9 +2300,14 @@ function showKill(id){
                   if (canKillLeft && !backIsActive){
                      clearButtons();
                   }
-                  createBtn(goCell);
-                  dead.push(cell);
-                  move.push(goCell);
+                  if (checkingKill == false){
+                     createBtn(goCell);
+                     dead.push(cell);
+                     move.push(goCell);
+                    }else{
+                     canAddChecked = true;
+                                                         // checkovani
+                    }
                  }
                  return;
               }
@@ -1538,10 +2326,16 @@ function showKill(id){
          console.log(cell);
          console.log(goCell);
          if (isOccupied2(cell) == true && isOccupied2(goCell) == false && isWhite(cell)){
-            canKill = true;
-            createBtn(goCell);
-            dead.push(cell);
-            move.push(goCell);
+           
+            if (checkingKill == false){
+               canKill = true;
+               createBtn(goCell);
+               dead.push(cell);
+               move.push(goCell);
+              }else{
+               canAddChecked = true;
+                                                   // checkovani
+              }
             return;
          }
          return;
@@ -1557,9 +2351,15 @@ function showKill(id){
             if (canKillLeft && !backIsActive){
                clearButtons();
             }
-            createBtn(goCell);
-            dead.push(cell);
-            move.push(goCell);
+            if (checkingKill == false){
+               
+               createBtn(goCell);
+               dead.push(cell);
+               move.push(goCell);
+              }else{
+               canAddChecked = true;
+                                                   // checkovani
+              }
             return;
          }
          return;
@@ -1570,9 +2370,15 @@ function showKill(id){
            goCell = document.getElementById(cell.id - (-6));
            if (isOccupied2(goCell) == false && isWhite(cell)){
               
-            createBtn(goCell);
-            dead.push(cell);
-            move.push(goCell);
+            if (checkingKill == false){
+              
+               createBtn(goCell);
+               dead.push(cell);
+               move.push(goCell);
+              }else{
+               canAddChecked = true;
+                                                // checkovani
+              }
            }
            
            return;
@@ -1581,9 +2387,15 @@ function showKill(id){
             canCreate = false;
             goCell = document.getElementById(cell.id - (-4));
             if (isOccupied2(goCell) == false && isWhite(cell)){
-             createBtn(goCell);
-             dead.push(cell);
-             move.push(goCell);
+               if (checkingKill == false){
+              
+                  createBtn(goCell);
+                  dead.push(cell);
+                  move.push(goCell);
+                 }else{
+                  canAddChecked = true;
+                                                     // checkovani
+                 }
             }
             return;
          }else{
@@ -1599,9 +2411,15 @@ function showKill(id){
                 if (canKillLeft && !backIsActive){
                   clearButtons();
                }
-                createBtn(goCell);
-                dead.push(cell);
-                move.push(goCell);
+               if (checkingKill == false){
+              
+                  createBtn(goCell);
+                  dead.push(cell);
+                  move.push(goCell);
+                 }else{
+                  canAddChecked = true;
+                                                    // checkovani
+                 }
                }
                return;
             }
@@ -1616,9 +2434,15 @@ function showKill(id){
                 if (canKillLeft && !backIsActive){
                   clearButtons();
                }
-                createBtn(goCell);
-                dead.push(cell);
-                move.push(goCell);
+               if (checkingKill == false){
+              
+                  createBtn(goCell);
+                  dead.push(cell);
+                  move.push(goCell);
+                 }else{
+                  canAddChecked = true;
+                                                    // checkovani
+                 }
                }
                return;
             }
@@ -1718,32 +2542,52 @@ function killEnemy(dead, move, target){
       var img = document.getElementById(dead[0].id).getElementsByTagName("img")[0];
       console.log(img);
       img.src = "";
+      killed = true;
      }
      if (move[1] == target2){
       var img = document.getElementById(dead[1].id).getElementsByTagName("img")[0];
       console.log(img);
       img.src = "";
+      killed = true;
      }
      if (move[2] == target2){
       var img = document.getElementById(dead[2].id).getElementsByTagName("img")[0];
       console.log(img);
       img.src = "";
+      killed = true;
      }
      if (move[3] == target2){
       var img = document.getElementById(dead[3].id).getElementsByTagName("img")[0];
       console.log(img);
       img.src = "";
+      killed = true;
      }
      
      
   }
+  lastMove = target2.getElementsByTagName('img')[0];
+  console.log(lastMove);
+  checkWin();
+ 
 }
 
 function showBackKill(id){
- 
+   
    var cell = document.getElementById(id);
    var goCell;
+
+   if (turn == false){
+      if (isMid(id) == "left"){
+
+      }
+   }
+
   
+   console.log(cell)
+  
+  
+
+   cell = document.getElementById(id);
    if (turn == true){
       if (corner == true){
          if (isMid(id) == "left"){
@@ -1751,12 +2595,17 @@ function showBackKill(id){
          }else{
             goCell = document.getElementById(parseInt(id) + 4);
          }
-         if (isOccupied2(goCell) == false){
-            createBtn(goCell);
-            canForward = false;
-            backIsActive = true;
-            dead.push(cell);
-            move.push(goCell);
+         if (isOccupied2(goCell) == false && isSameTeam(cell) == false){
+            if (checkingKill == false){
+               createBtn(goCell);
+               canForward = false;
+               backIsActive = true;
+               dead.push(cell);
+               move.push(goCell);
+            }else{
+               canAddChecked = true;
+            }
+           
          }
         
          return;
@@ -1771,12 +2620,16 @@ function showBackKill(id){
          }else{
             goCell = document.getElementById(parseInt(id) - 6);
          }
-         if (isOccupied2(goCell) == false){
-            createBtn(goCell);
-            canForward = false;
-            backIsActive = true;
-            dead.push(cell);
-            move.push(goCell);
+         if (isOccupied2(goCell) == false && isSameTeam(cell) == false){
+            if (checkingKill == false){
+               createBtn(goCell);
+               canForward = false;
+               backIsActive = true;
+               dead.push(cell);
+               move.push(goCell);
+            }else{
+               canAddChecked = true;
+            }
          }
         
          return;
@@ -1801,11 +2654,15 @@ function showBackKill(id){
          }
       }
       if (isOccupied2(goCell) == false){
-         createBtn(goCell);
-         canForward = false;
-         backIsActive = true;
-         dead.push(cell);
-         move.push(goCell);
+         if (checkingKill == false){
+            createBtn(goCell);
+            canForward = false;
+            backIsActive = true;
+            dead.push(cell);
+            move.push(goCell);
+         }else{
+            canAddChecked = true;
+         }
       }
     
       return;
@@ -1832,12 +2689,15 @@ function showBackKill(id){
          
       }
       if (isOccupied2(goCell) == false){
-         console.log(goCell);
-         createBtn(goCell);
-         backIsActive = true;
-         canForward = false;
-         dead.push(cell);
-         move.push(goCell);
+          if (checkingKill == false){
+               createBtn(goCell);
+               canForward = false;
+               backIsActive = true;
+               dead.push(cell);
+               move.push(goCell);
+            }else{
+               canAddChecked = true;
+            }
       }
       
       return;
@@ -1997,4 +2857,52 @@ var positions = [];
   
 
    
+}
+
+function isSameTeam(goCell){
+   if (turn == true){
+      let img = document.getElementById(goCell.id).getElementsByTagName("img")[0];
+      let src = img.getAttribute('src');
+      if (src.includes("black") || src.includes("Black")){
+         return false;
+      }
+   }
+
+   if (turn == false){
+      let img = document.getElementById(goCell.id).getElementsByTagName("img")[0];
+      let src = img.getAttribute('src');
+      if (src.includes("white") || src.includes("White")){
+         return false;
+      }
+   }
+}
+
+function checkWin(){
+   const winHeader = document.getElementById("winHeader");
+   var whites = 0;
+   var blacks = 0;
+   coins = document.querySelectorAll("[data-coin]");  
+   coins.forEach(coin => {
+      if (coin.src.includes("white") || coin.src.includes("White")){
+         whites++;
+      }
+      if (coin.src.includes("black") ||coin.src.includes("Black")){
+         blacks++;
+      }
+   })
+   console.log(document.getElementById("winHeader"))
+
+   if (blacks == 0){
+     winMessage.classList.add("winMessage");
+     winHeader.innerHTML = "White Won!";
+
+   }
+
+   if (whites == 0){
+      winMessage.classList.add("winMessage");
+      winHeader.innerHTML = "Black Won!";
+      
+   }
+
+
 }
