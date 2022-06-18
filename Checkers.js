@@ -15,7 +15,7 @@ var activeCoin;
 var checkingKill = false;
 var lastMove;
 var go = false;
-var turn = true;
+var turn = false;
 var side = "";
 var activeQueen = false;
 let canCreate = true;
@@ -27,7 +27,7 @@ var queenMoves = [];
 var dead = [];
 var move = [];
 var backIsActive = false;
-
+changeTurn();
 
 coins.forEach(coin => {       
    
