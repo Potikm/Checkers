@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkers</title>
+    <link rel="stylesheet" href="Checkers.css">
+    <script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
+    <script src="https://cdn.socket.io/4.5.3/socket.io.min.js" integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="Checkers.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js" defer></script>
+
+    <link rel="shortcut icon" href="Pics/chess-board-of-rounded-square-shape.png">
+</head>
+<body>
+    <h1 class="turn">White´s Turn</h1>
+<div id="Board" class="Board">
+
+    <div class="cell"></div>
+    <div id="1" class="moveCell"> 
+        <img  data-coin class="pic" src="Pics/blackCoin.png" alt="">
+    </div>
+    <div class="cell"></div>
+    <div  id="2" class="moveCell">
+        <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+    </div>
+    <div class="cell"></div>
+    <div  id="3" class="moveCell">
+        <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+    </div>
+    <div class="cell"></div>
+    <div  id="4" class="moveCell">
+        <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+    </div>
+    <div class="cell"></div>
+    <div  id="5" class="moveCell">
+        <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+    </div>
+
+   <div  id="6" class="moveCell">
+    <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="7" class="moveCell">
+    <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="8" class="moveCell">
+    <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="9" class="moveCell">
+    <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="10" class="moveCell">
+    <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   
+   <div class="cell"></div>
+   <div  id="11" class="moveCell"> 
+       <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="12" class="moveCell">
+       <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="13" class="moveCell">
+       <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="14" class="moveCell">
+       <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="15" class="moveCell">
+       <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+
+   <div id="16" class="moveCell">
+    <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="17" class="moveCell">
+    <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="18" class="moveCell">
+    <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="19" class="moveCell">
+    <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="20" class="moveCell">
+    <img data-coin class="pic" src="Pics/blackCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+ 
+   <div class="cell"></div>                               <!-- 5 -->
+   <div id="21" class="moveCell">
+    <img data-coin class="pic" src="" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="22" class="moveCell">
+    <img data-coin class="pic" src="" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="23" class="moveCell">
+    <img data-coin class="pic" src="" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="24" class="moveCell">
+    <img data-coin class="pic" src="" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="25"class="moveCell">
+    <img data-coin class="pic" src="" alt="">
+   </div>
+
+   <div id="26" class="moveCell">                        <!-- 6 -->
+    <img data-coin class="pic" src="" alt="">
+   </div>       
+   <div class="cell"></div>
+   <div id="27" class="moveCell">
+    <img data-coin class="pic" src="" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="28" class="moveCell">
+    <img data-coin class="pic" src="" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="29" class="moveCell">
+    <img data-coin class="pic" src="" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="30" class="moveCell">
+    <img data-coin class="pic" src="" alt="">
+   </div>
+   <div class="cell"></div>
+
+   <div class="cell"></div>
+   <div  id="31" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="32" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="33" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="34" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="35" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+
+   <div id="36" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="37" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="38" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="39" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="40" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+
+   <div class="cell"></div>
+   <div id="41" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="42" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="43" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="44" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="45" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+
+   <div id="46" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="47" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="48" class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div id="49"  class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+   <div  id="50"  class="moveCell">
+    <img data-coin class="pic" src="Pics/whiteCoin.png" alt="">
+   </div>
+   <div class="cell"></div>
+
+</div>
+<div class="" id="win">
+    
+    <h1 id="winHeader" class=""></h1>
+</div>
+
+
+</body>
+</html>

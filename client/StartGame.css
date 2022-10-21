@@ -1,0 +1,51 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+.StartArea{
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: gray;
+}
+
+.buttons{
+    width: 50%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    background-color: black;
+    position: absolute;
+    border-radius: 10px;
+}
+
+.button{
+    width: 30%;
+    height: 50%;
+    background-color: gray;
+
+}
+
+.startText{
+    color: white;
+    font-size: 20px;
+    width: 100%;
+}
+
+
+.startImg{
+    max-width: 50px;
+    position: absolute;
+    left: 10%;
+    top: 5%;
+  
+}
